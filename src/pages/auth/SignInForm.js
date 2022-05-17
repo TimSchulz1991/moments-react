@@ -15,39 +15,46 @@ import btnStyles from "../../styles/Button.module.css";
 import appStyles from "../../App.module.css";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
+import { useSetCurrentUser } from "../../context/CurrentUserContext";
 
 function SignInForm() {
+    const setCurrentUser = useSetCurrentUser();
+
     const [signInData, setSignInData] = useState({
-        username: '',
-        password: ''
+        username: "",
+        password: "",
     });
     const [errors, setErrors] = useState({});
-    const {username, password} = signInData;
+    const { username, password } = signInData;
     const history = useHistory();
 
     const handleChange = (e) => {
         setSignInData({
             ...signInData,
-            [e.target.name]: e.target.value
-        })
-    }
+            [e.target.name]: e.target.value,
+        });
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('/dj-rest-auth/login/', signInData);
-            history.push('/');
+            const { data } = await axios.post(
+                "/dj-rest-auth/login/",
+                signInData
+            );
+            setCurrentUser(data.user);
+            history.push("/");
         } catch (err) {
-            setErrors(err.response?.data)
+            setErrors(err.response?.data);
         }
-    }
+    };
 
     return (
         <Row className={styles.Row}>
             <Col className="my-auto p-0 p-md-2" md={6}>
                 <Container className={`${appStyles.Content} p-4 `}>
                     <h1 className={styles.Header}>sign in</h1>
-                    
+
                     <Form onSubmit={handleSubmit}>
                         <Form.Group controlId="username">
                             <Form.Label className="d-none">username</Form.Label>
