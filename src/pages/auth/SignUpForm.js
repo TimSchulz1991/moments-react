@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 
-import styles from "../../styles/SignUpForm.module.css";
+import styles from "../../styles/SignInUpForm.module.css";
 import btnStyles from "../../styles/Button.module.css";
 import appStyles from "../../App.module.css";
 
@@ -42,6 +42,7 @@ const SignUpForm = () => {
             history.push("/signin");
         } catch (err) {
             // optional chaining below - ? means to check if response exists before looking for data
+            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining
             setErrors(err.response?.data);
         }
     };
