@@ -7,7 +7,7 @@ import Container from "react-bootstrap/Container";
 import appStyles from "../../App.module.css";
 import { useParams } from "react-router-dom";
 import { axiosReq } from "../../api/axiosDefaults";
-import Posts from "./Posts";
+import Posts from "./Post";
 
 function PostPage() {
     const { id } = useParams();
