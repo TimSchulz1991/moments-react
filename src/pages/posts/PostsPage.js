@@ -12,6 +12,8 @@ import { axiosReq } from "../../api/axiosDefaults";
 import Post from "./Post";
 import Asset from "../../components/Asset";
 import NoResults from "../../assets/no-results.png";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { fetchMoreData } from "../../utils/utils";
 
 function PostsPage({ message, filter = "" }) {
     const [posts, setPosts] = useState({ results: [] });
@@ -27,6 +29,7 @@ function PostsPage({ message, filter = "" }) {
                 const { data } = await axiosReq.get(
                     `/posts/?${filter}search=${query}`
                 );
+                console.log(data)
                 setPosts(data);
                 setHasLoaded(true);
             } catch (err) {
@@ -66,13 +69,22 @@ function PostsPage({ message, filter = "" }) {
                 {hasLoaded ? (
                     <>
                         {posts.results.length ? (
-                            posts.results.map((post) => (
-                                <Post
-                                    key={post.id}
-                                    {...post}
-                                    setPosts={setPosts}
-                                />
-                            ))
+                            <InfiniteScroll
+                                children={posts.results.map((post) => (
+                                    <Post
+                                        key={post.id}
+                                        {...post}
+                                        setPosts={setPosts}
+                                    />
+                                ))}
+                                dataLength = {posts.results.length}
+                                loader = {<Asset spinner />}
+                                hasMore = {!!posts.next} // double !! makes it evaluate to true or false
+                                // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Logical_NOT#double_not_!!
+                                // the api only loads 10 posts at a time, so next is checked to see if there are more to load
+                                next={() => fetchMoreData(posts, setPosts)}
+                                // what to run next if hasMore is true
+                            />  
                         ) : (
                             <Container className={appStyles.Content}>
                                 <Asset src={NoResults} message={message} />
