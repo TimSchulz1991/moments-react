@@ -11,6 +11,9 @@ import { useParams } from "react-router-dom";
 import { axiosReq } from "../../api/axiosDefaults";
 import Posts from "./Post";
 import Comment from "../comments/Comment";
+import Asset from "../../components/Asset";
+import InfiniteScroll from "react-infinite-scroll-component";
+import {fetchMoreData} from "../../utils/utils";
 
 function PostPage() {
     const { id } = useParams();
@@ -55,14 +58,23 @@ function PostPage() {
                         "Comments"
                     ) : null}
                     {comments.results.length ? (
-                        comments.results.map((comment) => (
-                            <Comment
-                                key={comment.id}
-                                {...comment}
-                                setComments={setComments}
-                                setPost={setPost}
-                            />
-                        ))
+                        <InfiniteScroll
+                            children={comments.results.map((comment) => (
+                                <Comment
+                                    key={comment.id}
+                                    {...comment}
+                                    setComments={setComments}
+                                    setPost={setPost}
+                                />
+                            ))}
+                            dataLength={comments.results.length}
+                            loader={<Asset spinner />}
+                            hasMore={!!comments.next} // double !! makes it evaluate to true or false
+                            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Logical_NOT#double_not_!!
+                            // the api only loads 10 posts at a time, so next is checked to see if there are more to load
+                            next={() => fetchMoreData(comments, setComments)}
+                            // what to run next if hasMore is true
+                        />
                     ) : currentUser ? (
                         <span>No comments yet, be the first to comment!</span>
                     ) : (
