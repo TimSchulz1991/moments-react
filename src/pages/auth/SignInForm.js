@@ -16,9 +16,11 @@ import appStyles from "../../App.module.css";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
 import { useSetCurrentUser } from "../../context/CurrentUserContext";
+import { useRedirect } from '../../hooks/useRedirect'
 
 function SignInForm() {
     const setCurrentUser = useSetCurrentUser();
+    useRedirect('loggedIn')
 
     const [signInData, setSignInData] = useState({
         username: "",
@@ -43,7 +45,7 @@ function SignInForm() {
                 signInData
             );
             setCurrentUser(data.user);
-            history.push("/");
+            history.goBack();
         } catch (err) {
             setErrors(err.response?.data);
         }
